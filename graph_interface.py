@@ -2,14 +2,16 @@
 import tkinter as tk  
 from tkinter import *
 import math
+import random
 radius = 30
 
 #create panel
 root = tk.Tk()
-canvas = tk.Canvas(root, width=800, height=600)
-canvas.pack()
-
-
+width = root.winfo_screenwidth() - 100
+height = root.winfo_screenheight() - 100
+root.geometry("{0}x{1}+0+0".format(width, height))
+canvas = tk.Canvas(root)
+canvas.pack(fill=tk.BOTH, expand=True)
 
 # class for directed graph
 class Graph:
@@ -19,7 +21,12 @@ class Graph:
         self.circle = {}
         self.graph = [[0 for column in range(vertices)] for row in range(vertices)]
     
-    import tkinter as tk
+    def __init__(self, vertices, edges):
+        self.V = vertices
+        self.circle = {}
+        self.graph = [[0 for column in range(vertices)] for row in range(vertices)]
+        for i in range(edges):
+            self.addEdge(random.randint(0,vertices-1),random.randint(0,vertices-1),random.randint(1,10))
 
     # function to add an edge to graph
     def addEdge(self, u, v, w):
@@ -60,7 +67,7 @@ class Graph:
 
 
 
-    def drawgraph(self):
+    def drawgraph(self , nodesPerRow = 3):
 
         # Define the radius and spacing of the circles
         radius = 30
@@ -72,8 +79,8 @@ class Graph:
 
         # Draw circles for each vertex
         for i in range(self.V):
-            x = (i % 3) * x_spacing + radius + 50
-            y = (i // 3) * y_spacing + radius + 50
+            x = (i % nodesPerRow) * x_spacing + radius + 50
+            y = (i // nodesPerRow) * y_spacing + radius + 50
             canvas.create_oval(x - radius, y - radius, x + radius, y + radius, fill="white")
             self.circles.append(canvas.create_oval(x - radius, y - radius, x + radius, y + radius, fill="white"))
             canvas.create_text(x, y, text=str(i), font="Arial 20 bold")
@@ -106,11 +113,11 @@ class Graph:
                             y2 -= math.sin(angle) * radius
 
                             if x1 == x2 and distance > y_spacing:
-                                canvas.create_arc(x1 - radius, y1, x2 + radius, y2, start=90, extent=180, width=2, style=tk.ARC)
+                                canvas.create_arc(x1 - radius - 20, y1, x2 + radius, y2, start=90, extent=180, width=2, style=tk.ARC)
                             elif y1 == y2 and distance > x_spacing:
-                                canvas.create_arc(x1, y1 - radius, x2, y2 + radius, start=0, extent=180, width=2, style=tk.ARC)
-                            elif (round(math.degrees(angle)) == 45 or round(math.degrees(angle)) == -45) and distance > (math.sqrt(2) * x_spacing):
-                                canvas.create_arc(x1 - radius, y1 - radius, x2 + radius, y2 + radius, start=0, extent=180, width=2, style=tk.ARC)
+                                canvas.create_arc(x1, y1 - radius - 20, x2, y2 + radius , start=0, extent=180, width=2, style=tk.ARC)
+                            # elif (round(math.degrees(angle)) == 45 or round(math.degrees(angle)) == -45) and distance > (math.sqrt(2) * x_spacing):
+                            #     canvas.create_arc(x1 - radius, y1 - radius, x2 + radius, y2 + radius, start=0, extent=180, width=2, style=tk.ARC)
 
                             #get angle of line
                             else:
