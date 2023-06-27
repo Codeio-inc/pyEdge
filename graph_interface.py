@@ -99,8 +99,8 @@ class Graph:
 
                         # If the circles are the same, draw a loop
                         if x1 == x2 and y1 == y2:
-                            points = (x1+radius,y1), (x1 + 2*radius , y1 + radius), (x1 + 4*radius , y1), (x1 + 2*radius , y1 - radius),(x1+radius,y1)
-                            canvas.create_line(points, arrow=tk.LAST, smooth=1, width=2)
+                            points = (x1+radius,y1), (x1 + 2*radius , y1 + radius/2), (x1 + 3*radius , y1), (x1 + 2*radius , y1 - radius/2),(x1+radius,y1)
+                            canvas.create_line(points, arrow=tk.LAST, smooth=1, width=2, arrowshape=(15,15,5))
         
                         # Otherwise, draw a line
                         else:
@@ -124,7 +124,7 @@ class Graph:
                             y3 -= math.cos(angle) * padding*sign*needs_curve
                                 
                             points = (x1,y1), (x3,y3), (x2,y2)
-                            canvas.create_line(points, arrow=tk.LAST, smooth=1, width=2) #draw the line
+                            canvas.create_line(points, arrow=tk.LAST, smooth=1, width=2 , arrowshape=(15,15,5)) #draw the line
 
                             
                                 
