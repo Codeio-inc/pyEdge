@@ -68,6 +68,7 @@ class Graph:
 
 
     def drawgraph(self , nodesPerRow = 3):
+        
 
         # Define the radius and spacing of the circles
         radius = 30
@@ -96,15 +97,12 @@ class Graph:
                         y2 = canvas.coords(self.circles[j])[1] + radius
                         angle = math.atan2(y2 - y1, x2 - x1)
 
+                        # If the circles are the same, draw a loop
                         if x1 == x2 and y1 == y2:
-                            canvas.create_oval(x1 + radius , y1 + (radius/2) , x1 + 3*radius, y1 - (radius/2), width=2, outline="black")
-                            x1 = x1 + radius + 12
-                            x2 = x2 + radius
-                            y1 = y1 - 13
-                            y2 = y2 
-                            canvas.create_line(x1, y1 , x2 , y2 , arrow=tk.LAST, fill="black", width=1, arrowshape=(15,15,7) )
-                            
-
+                            points = (x1+radius,y1), (x1 + 2*radius , y1 + radius), (x1 + 4*radius , y1), (x1 + 2*radius , y1 - radius),(x1+radius,y1)
+                            canvas.create_line(points, arrow=tk.LAST, smooth=1, width=2)
+        
+                        # Otherwise, draw a line
                         else:
                             distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
                             x1 += math.cos(angle) * radius
@@ -112,16 +110,24 @@ class Graph:
                             x2 -= math.cos(angle) * radius
                             y2 -= math.sin(angle) * radius
 
-                            if x1 == x2 and distance > y_spacing:
-                                canvas.create_arc(x1 - radius - 20, y1, x2 + radius, y2, start=90, extent=180, width=2, style=tk.ARC)
-                            elif y1 == y2 and distance > x_spacing:
-                                canvas.create_arc(x1, y1 - radius - 20, x2, y2 + radius , start=0, extent=180, width=2, style=tk.ARC)
-                            # elif (round(math.degrees(angle)) == 45 or round(math.degrees(angle)) == -45) and distance > (math.sqrt(2) * x_spacing):
-                            #     canvas.create_arc(x1 - radius, y1 - radius, x2 + radius, y2 + radius, start=0, extent=180, width=2, style=tk.ARC)
+                            #if the distance between the two points is greater than the distance between the two circles,
+                            #then we need to curve the line so it doesn't go through the circles
+                            needs_curve = 1 if distance > math.sqrt(2)*x_spacing else 0
 
-                            #get angle of line
-                            else:
-                                canvas.create_line(x1, y1, x2, y2, arrow=tk.LAST, fill="black", width=2)
+                            #get point in the middle of the line connecting them
+                            x3 = (x1 + x2) / 2
+                            y3 = (y1 + y2) / 2
+                            sign = math.copysign(1,angle)
+                            padding = 3*radius*sign
+                            
+                            x3 += math.sin(angle) * padding*sign*needs_curve
+                            y3 -= math.cos(angle) * padding*sign*needs_curve
+                                
+                            points = (x1,y1), (x3,y3), (x2,y2)
+                            canvas.create_line(points, arrow=tk.LAST, smooth=1, width=2) #draw the line
+
+                            
+                                
                         
         # Start the main loop to display the window
         root.mainloop()
