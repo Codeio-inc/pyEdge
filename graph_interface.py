@@ -2,8 +2,9 @@
 import tkinter as tk  
 from tkinter import *
 import math
-import random
 radius = 30
+
+#create panel
 root = tk.Tk()
 canvas = tk.Canvas(root, width=800, height=600)
 canvas.pack()
@@ -60,9 +61,7 @@ class Graph:
 
 
     def drawgraph(self):
-        
 
-        
         # Define the radius and spacing of the circles
         radius = 30
         x_spacing = 150
@@ -71,16 +70,14 @@ class Graph:
         # Create circles for each vertex
         self.circles = []
 
-
         # Draw circles for each vertex
         for i in range(self.V):
             x = (i % 3) * x_spacing + radius + 50
             y = (i // 3) * y_spacing + radius + 50
             canvas.create_oval(x - radius, y - radius, x + radius, y + radius, fill="white")
             self.circles.append(canvas.create_oval(x - radius, y - radius, x + radius, y + radius, fill="white"))
-            canvas.create_text(x, y, text=str(i))
+            canvas.create_text(x, y, text=str(i), font="Arial 20 bold")
         
-
         # Draw arrows for each edge
         for i in range(self.V):
             for j in range(self.V):
@@ -90,15 +87,34 @@ class Graph:
                         y1 = canvas.coords(self.circles[i])[1] + radius
                         x2 = canvas.coords(self.circles[j])[0] + radius
                         y2 = canvas.coords(self.circles[j])[1] + radius
-
-                        #get angle of line
                         angle = math.atan2(y2 - y1, x2 - x1)
-                        x1 += math.cos(angle) * radius
-                        y1 += math.sin(angle) * radius
-                        x2 -= math.cos(angle) * radius
-                        y2 -= math.sin(angle) * radius
-                        # Draw the arrow connecting the centers of the circles
-                        canvas.create_line(x1, y1, x2, y2, arrow=tk.LAST)
+
+                        if x1 == x2 and y1 == y2:
+                            canvas.create_oval(x1 + radius , y1 + (radius/2) , x1 + 3*radius, y1 - (radius/2), width=2, outline="black")
+                            x1 = x1 + radius + 12
+                            x2 = x2 + radius
+                            y1 = y1 - 13
+                            y2 = y2 
+                            canvas.create_line(x1, y1 , x2 , y2 , arrow=tk.LAST, fill="black", width=1, arrowshape=(15,15,7) )
+                            
+
+                        else:
+                            distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+                            x1 += math.cos(angle) * radius
+                            y1 += math.sin(angle) * radius
+                            x2 -= math.cos(angle) * radius
+                            y2 -= math.sin(angle) * radius
+
+                            if x1 == x2 and distance > y_spacing:
+                                canvas.create_arc(x1 - radius, y1, x2 + radius, y2, start=90, extent=180, width=2, style=tk.ARC)
+                            elif y1 == y2 and distance > x_spacing:
+                                canvas.create_arc(x1, y1 - radius, x2, y2 + radius, start=0, extent=180, width=2, style=tk.ARC)
+                            elif (round(math.degrees(angle)) == 45 or round(math.degrees(angle)) == -45) and distance > (math.sqrt(2) * x_spacing):
+                                canvas.create_arc(x1 - radius, y1 - radius, x2 + radius, y2 + radius, start=0, extent=180, width=2, style=tk.ARC)
+
+                            #get angle of line
+                            else:
+                                canvas.create_line(x1, y1, x2, y2, arrow=tk.LAST, fill="black", width=2)
                         
         # Start the main loop to display the window
         root.mainloop()
@@ -147,13 +163,3 @@ class Graph:
     
 
 
-
-graph = Graph(6)
-graph.addEdge(0, 1, 16)
-graph.addEdge(0, 3, 13)
-graph.addEdge(1, 2, 10)
-graph.addEdge(1, 3, 12)
-graph.addEdge(2, 1, 4)
-
-print("The maximum possible flow is %d " % graph.FordFulkerson(0, 3))
-graph.drawgraph()
