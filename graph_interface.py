@@ -20,6 +20,7 @@ class Graph:
         self.V = vertices
         self.circle = {}
         self.graph = [[0 for column in range(vertices)] for row in range(vertices)]
+        #print graph matrix        
     
     def __init__(self, vertices, edges):
         self.V = vertices
@@ -30,7 +31,7 @@ class Graph:
 
     # function to add an edge to graph
     def addEdge(self, u, v, w):
-        self.graph[u][v] = w
+        self.graph[u][v] += w
 
     # Returns true if there is a path from source 's' to sink 't' in
     # residual graph. Also fills parent[] to store the path
